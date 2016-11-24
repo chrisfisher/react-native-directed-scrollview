@@ -48,3 +48,5 @@ const styles = StyleSheet.create({
   },
 })
 ```
+
+See the [example project](https://github.com/chrisfisher/react-native-directed-scrollview/tree/master/example) for more detail.
