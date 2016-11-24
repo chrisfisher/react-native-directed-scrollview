@@ -19,8 +19,10 @@
     "vertical"
   ],
   "peerDependencies": {
-    "react-native": ">=0.30"
+    "react-native": ">=0.30.0",
+    "react": ">=0.14.5"
   },
+  "nativePackage": true,
   "rnpm": {
     "ios": {
       "project": "ios/RCTDirectedScrollView.xcodeproj"
@@ -33,3 +35,5 @@
   },
   "homepage": "https://github.com/chrisfisher/react-native-directed-scrollview#readme"
 }
+
+
