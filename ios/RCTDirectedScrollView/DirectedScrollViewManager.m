@@ -7,6 +7,7 @@
 
 #import "DirectedScrollViewManager.h"
 #import "RCTScrollView.h"
+#import "RCTUIManager.h"
 
 @interface DirectedScrollView : RCTScrollView
 
@@ -60,10 +61,13 @@ RCT_EXPORT_MODULE()
     return [[DirectedScrollView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
 }
 
-#pragma mark - export custom properties
+// RCTDirectedScrollView properties
 
 RCT_EXPORT_VIEW_PROPERTY(horizontallyScrollingSubviewIndex, int)
 RCT_EXPORT_VIEW_PROPERTY(verticallyScrollingSubviewIndex, int)
+
+// RCTScrollView properties
+
 RCT_EXPORT_VIEW_PROPERTY(alwaysBounceHorizontal, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(alwaysBounceVertical, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(bounces, BOOL)
@@ -83,6 +87,24 @@ RCT_EXPORT_VIEW_PROPERTY(contentInset, UIEdgeInsets)
 RCT_EXPORT_VIEW_PROPERTY(scrollIndicatorInsets, UIEdgeInsets)
 RCT_EXPORT_VIEW_PROPERTY(snapToInterval, int)
 RCT_EXPORT_VIEW_PROPERTY(snapToAlignment, NSString)
+
+// RCTScrollView methods
+
+RCT_EXPORT_METHOD(scrollTo:(nonnull NSNumber *)reactTag
+                  offsetX:(CGFloat)x
+                  offsetY:(CGFloat)y
+                  animated:(BOOL)animated)
+{
+    [self.bridge.uiManager addUIBlock:
+     ^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry){
+         UIView *view = viewRegistry[reactTag];
+         if ([view conformsToProtocol:@protocol(RCTScrollableProtocol)]) {
+             [(id<RCTScrollableProtocol>)view scrollToOffset:(CGPoint){x, y} animated:animated];
+         } else {
+             RCTLogError(@"tried to scrollTo: on non-RCTScrollableProtocol view %@ with tag #%@", view, reactTag);
+         }
+     }];
+}
 
 @end
 
