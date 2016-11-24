@@ -1,6 +1,6 @@
 {
   "name": "react-native-directed-scrollview",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A custom scrollview component which allows some content to scroll in both directions and other content to only scroll horizontally or vertically",
   "main": "index.js",
   "scripts": {
@@ -19,8 +19,7 @@
     "vertical"
   ],
   "peerDependencies": {
-    "react-native": ">=0.30.0",
-    "react": ">=0.14.5"
+    "react-native": ">=0.30.0"
   },
   "nativePackage": true,
   "rnpm": {
