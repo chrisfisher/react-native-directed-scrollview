@@ -1,7 +1,8 @@
 # react-native-directed-scrollview
-A natively implemented scrollview component which allows some content to scroll in both directions and other content to only scroll horizontally or vertically.
 
-Check out a [demo here](https://gfycat.com/KlutzySoreAcouchi).
+![demo](example/rnds-demo.gif)
+
+A natively implemented scrollview component which allows some content to scroll in both directions and other content to only scroll horizontally or vertically.
 
 This component extends the default ScrollView component but has a much more limited API. It does not broadcast an `onScroll` event to JavaScript, as the intention was to make the scroll direction of subviews configurable through a declarative API and avoid having to do frame-by-frame calculations in JavaScript for performance reasons.
 
