@@ -30,3 +30,7 @@ const DirectedScrollView = React.createClass({
 });
 
 export default DirectedScrollView;
+
+export const scrollViewWillBeginDragging = 'scrollViewWillBeginDragging';
+
+export const scrollViewDidEndDragging = 'scrollViewDidEndDragging';
