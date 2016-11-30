@@ -8,6 +8,13 @@
 #import <Foundation/Foundation.h>
 #import "RCTViewManager.h"
 
-@interface DirectedScrollViewManager : RCTViewManager
+@protocol DirectedScrollViewDelegate <NSObject>
+
+-(void)scrollViewWillBeginDragging;
+-(void)scrollViewDidEndDragging;
+
+@end
+
+@interface DirectedScrollViewManager : RCTViewManager <DirectedScrollViewDelegate>
 
 @end

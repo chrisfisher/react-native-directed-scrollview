@@ -8,11 +8,14 @@
 #import "DirectedScrollViewManager.h"
 #import "RCTScrollView.h"
 #import "RCTUIManager.h"
+#import "RCTEventDispatcher.h"
 
 @interface DirectedScrollView : RCTScrollView
 
 @property (nonatomic) int horizontallyScrollingSubviewIndex;
 @property (nonatomic) int verticallyScrollingSubviewIndex;
+
+@property (nonatomic, weak) id <DirectedScrollViewDelegate> delegate;
 
 @end
 
@@ -50,21 +53,52 @@
     verticallyScrollingSubview.transform = CGAffineTransformMakeTranslation(xOffset, 0);
 }
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if ([self.delegate respondsToSelector:@selector(scrollViewWillBeginDragging)]) {
+        [self.delegate scrollViewWillBeginDragging];
+    }
+}
+
+-(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if ([self.delegate respondsToSelector:@selector(scrollViewDidEndDragging)]) {
+        [self.delegate scrollViewDidEndDragging];
+    }
+}
+
 @end
 
 @implementation DirectedScrollViewManager
 
 RCT_EXPORT_MODULE()
 
+@synthesize bridge = _bridge;
+
 - (UIView *)view
 {
-    return [[DirectedScrollView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
+    DirectedScrollView *directedScrollView = [[DirectedScrollView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
+    
+    directedScrollView.delegate = self;
+    
+    return directedScrollView;
 }
+
 
 // RCTDirectedScrollView properties
 
 RCT_EXPORT_VIEW_PROPERTY(horizontallyScrollingSubviewIndex, int)
 RCT_EXPORT_VIEW_PROPERTY(verticallyScrollingSubviewIndex, int)
+
+
+// RCTDirectedScrollViewDelegate methods
+
+-(void)scrollViewWillBeginDragging {
+    [self.bridge.eventDispatcher sendDeviceEventWithName:@"scrollViewWillBeginDragging" body:nil];
+}
+
+-(void)scrollViewDidEndDragging {
+    [self.bridge.eventDispatcher sendDeviceEventWithName:@"scrollViewDidEndDragging" body:nil];
+}
+
 
 // RCTScrollView properties
 
@@ -87,6 +121,7 @@ RCT_EXPORT_VIEW_PROPERTY(contentInset, UIEdgeInsets)
 RCT_EXPORT_VIEW_PROPERTY(scrollIndicatorInsets, UIEdgeInsets)
 RCT_EXPORT_VIEW_PROPERTY(snapToInterval, int)
 RCT_EXPORT_VIEW_PROPERTY(snapToAlignment, NSString)
+
 
 // RCTScrollView methods
 
