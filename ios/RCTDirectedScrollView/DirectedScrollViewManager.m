@@ -25,32 +25,41 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (_horizontallyScrollingSubviewIndex <= 0 || _verticallyScrollingSubviewIndex <= 0) return;
+    if (_horizontallyScrollingSubviewIndex < 0 || _verticallyScrollingSubviewIndex < 0) return;
     
     UIView *contentView = [self contentView];
     
     NSUInteger subviewCount = contentView.reactSubviews.count;
     
-    if (_horizontallyScrollingSubviewIndex >= subviewCount || _verticallyScrollingSubviewIndex >= subviewCount) return;
+    if (_horizontallyScrollingSubviewIndex > 0 && _horizontallyScrollingSubviewIndex < subviewCount)
+    {
+        UIView *horizontallyScrollingSubview = contentView.reactSubviews[_horizontallyScrollingSubviewIndex];
+        
+        CGFloat scrollTop = scrollView.contentOffset.y + self.contentInset.top;
+        
+        // adjust the y offset based on the current zoom scale
+        // if we're zoomed in the offset required will be less, if we're zoomed out it will be more
+        CGFloat yOffset = scrollTop / scrollView.zoomScale;
+        
+        // translate the horizontally scrolling subview by the calculated y offset
+        // this cancels out the vertical translation applied by the scrollview and keeps the y position fixed
+        horizontallyScrollingSubview.transform = CGAffineTransformMakeTranslation(0, yOffset);
+    }
     
-    UIView *horizontallyScrollingSubview = contentView.reactSubviews[_horizontallyScrollingSubviewIndex];
-    UIView *verticallyScrollingSubview = contentView.reactSubviews[_verticallyScrollingSubviewIndex];
-    
-    CGFloat scrollLeft = scrollView.contentOffset.x + self.contentInset.left;
-    CGFloat scrollTop = scrollView.contentOffset.y + self.contentInset.top;
-    
-    // adjust the x and y offsets based on the current zoom scale
-    // if we're zoomed in the offset required will be less, if we're zoomed out it will be more
-    CGFloat xOffset = scrollLeft / scrollView.zoomScale;
-    CGFloat yOffset = scrollTop / scrollView.zoomScale;
-    
-    // translate the horizontally scrolling subview by the calculated y offset
-    // this cancels out the vertical translation applied by the scrollview and keeps the y position fixed
-    horizontallyScrollingSubview.transform = CGAffineTransformMakeTranslation(0, yOffset);
-    
-    // translate the vertically scrolling subview by the calculated x offset
-    // this cancels out the horizontal translation applied by the scrollview and keeps the x position fixed
-    verticallyScrollingSubview.transform = CGAffineTransformMakeTranslation(xOffset, 0);
+    if (_verticallyScrollingSubviewIndex > 0 && _verticallyScrollingSubviewIndex < subviewCount)
+    {
+        UIView *verticallyScrollingSubview = contentView.reactSubviews[_verticallyScrollingSubviewIndex];
+        
+        CGFloat scrollLeft = scrollView.contentOffset.x + self.contentInset.left;
+        
+        // adjust the x offset based on the current zoom scale
+        // if we're zoomed in the offset required will be less, if we're zoomed out it will be more
+        CGFloat xOffset = scrollLeft / scrollView.zoomScale;
+        
+        // translate the vertically scrolling subview by the calculated x offset
+        // this cancels out the horizontal translation applied by the scrollview and keeps the x position fixed
+        verticallyScrollingSubview.transform = CGAffineTransformMakeTranslation(xOffset, 0);
+    }
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
@@ -141,5 +150,21 @@ RCT_EXPORT_METHOD(scrollTo:(nonnull NSNumber *)reactTag
      }];
 }
 
-@end
+RCT_EXPORT_METHOD(zoomToFit:(nonnull NSNumber *)reactTag
+                  animated:(BOOL)animated)
+{
+    [self.bridge.uiManager addUIBlock:
+     ^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry){
+         UIView *view = viewRegistry[reactTag];
+         if ([view conformsToProtocol:@protocol(RCTScrollableProtocol)]) {
+             CGRect contentViewFrame = [(RCTScrollView*)view contentView].frame;
+             if (contentViewFrame.size.width > view.frame.size.width) {
+                 [(id<RCTScrollableProtocol>)view zoomToRect:contentViewFrame animated:animated];
+             }
+         } else {
+             RCTLogError(@"tried to zoomToRect: on non-RCTScrollableProtocol view %@ with tag #%@", view, reactTag);
+         }
+     }];
+}
 
+@end

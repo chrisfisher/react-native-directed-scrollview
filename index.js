@@ -14,6 +14,13 @@ const DirectedScrollView = React.createClass({
       [x || 0, y || 0, animated !== false],
     );   
   },
+  zoomToFit: function({ animated }) {
+     UIManager.dispatchViewManagerCommand(
+      this.getScrollableNode(),
+      UIManager.DirectedScrollView.Commands.zoomToFit,
+      [animated !== false],
+    ); 
+  },
   _scrollViewRef: null,
   _setScrollViewRef: function(ref) {
     this._scrollViewRef = ref;
