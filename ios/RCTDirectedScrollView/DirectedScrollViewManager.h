@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <React/RCTViewManager.h>
+#import "RCTViewManager.h"
 
 @protocol DirectedScrollViewDelegate <NSObject>
 

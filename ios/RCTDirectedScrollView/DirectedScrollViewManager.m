@@ -6,9 +6,9 @@
 //
 
 #import "DirectedScrollViewManager.h"
-#import <React/RCTScrollView.h>
-#import <React/RCTUIManager.h>
-#import <React/RCTEventDispatcher.h>
+#import "RCTScrollView.h"
+#import "RCTUIManager.h"
+#import "RCTEventDispatcher.h"
 
 @interface DirectedScrollView : RCTScrollView
 
