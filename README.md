@@ -6,21 +6,16 @@ A natively implemented scrollview component which lets you specify different scr
 
 The iOS implementation extends the default UIScrollView component, whereas the Android implementation is custom and aims to provide some limited parity with the iOS api.
 
-The following props are supported in both iOS and Android:
+The following props are supported:
 
-| Prop | Description |
-| --- | --- |
-| `minimumZoomScale` | How far the content can zoom out |
-| `maximumZoomScale` | How far the content can zoom in |
-| `bounces` | Whether content bounces at the limits when scrolling |
-| `bouncesZoom` | Whether content bounces at the limits when zooming |
-
-The following props are currently iOS only:
-
-| Prop | Description |
-| --- | --- |
-| `showsVerticalScrollIndicator` | Whether vertical scroll bars are visible |
-| `showsHorizontalScrollIndicator` | Whether horizontal scroll bars are visible |
+| Prop | Default | Description |
+| --- | --- | --- |
+| `minimumZoomScale` | `1.0` | How far the content can zoom out. |
+| `maximumZoomScale` | `1.0` | How far the content can zoom in. |
+| `bounces` | `true` | Whether content bounces at the limits when scrolling. |
+| `bouncesZoom` | true` | Whether content bounces at the limits when zooming. |
+| **ios** `showsVerticalScrollIndicator` | `false` | Whether vertical scroll bars are visible. |
+| **ios** `showsHorizontalScrollIndicator` | `false` | Whether horizontal scroll bars are visible. |
 
 ## Installation
 
@@ -41,8 +36,8 @@ export default class Example extends Component {
       <ScrollView
         bounces={true}
         bouncesZoom={true}
-        maximumZoomScale={1.5}
-        minimumZoomScale={0.75}
+        maximumZoomScale={2.0}
+        minimumZoomScale={0.5}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}

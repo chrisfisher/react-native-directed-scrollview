@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		899B2D951DE4DA9800EFC859 /* DirectedScrollViewManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 899B2D941DE4DA9800EFC859 /* DirectedScrollViewManager.h */; };
 		899B2D971DE4DA9800EFC859 /* DirectedScrollViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 899B2D961DE4DA9800EFC859 /* DirectedScrollViewManager.m */; };
+		D8720ACD1E51614100C90CB6 /* DirectedScrollViewChildManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D8720ACC1E51614100C90CB6 /* DirectedScrollViewChildManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,8 @@
 		899B2D911DE4DA9800EFC859 /* libRCTDirectedScrollView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTDirectedScrollView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		899B2D941DE4DA9800EFC859 /* DirectedScrollViewManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectedScrollViewManager.h; sourceTree = "<group>"; };
 		899B2D961DE4DA9800EFC859 /* DirectedScrollViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DirectedScrollViewManager.m; sourceTree = "<group>"; };
+		D8720ACB1E51614100C90CB6 /* DirectedScrollViewChildManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectedScrollViewChildManager.h; sourceTree = "<group>"; };
+		D8720ACC1E51614100C90CB6 /* DirectedScrollViewChildManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectedScrollViewChildManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +63,8 @@
 		899B2D931DE4DA9800EFC859 /* RCTDirectedScrollView */ = {
 			isa = PBXGroup;
 			children = (
+				D8720ACB1E51614100C90CB6 /* DirectedScrollViewChildManager.h */,
+				D8720ACC1E51614100C90CB6 /* DirectedScrollViewChildManager.m */,
 				899B2D941DE4DA9800EFC859 /* DirectedScrollViewManager.h */,
 				899B2D961DE4DA9800EFC859 /* DirectedScrollViewManager.m */,
 			);
@@ -122,6 +127,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8720ACD1E51614100C90CB6 /* DirectedScrollViewChildManager.m in Sources */,
 				899B2D971DE4DA9800EFC859 /* DirectedScrollViewManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

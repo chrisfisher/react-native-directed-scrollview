@@ -2,18 +2,14 @@
 //  DirectedScrollViewManager.m
 //  DirectedScrollViewManager
 //
-//  Created by Chris Fisher on 23/11/16.
-//
 
 #import "DirectedScrollViewManager.h"
-#import "RCTScrollView.h"
-#import "RCTUIManager.h"
-#import "RCTEventDispatcher.h"
+#import "DirectedScrollViewChildManager.h"
+#import <React/RCTScrollView.h>
+#import <React/RCTUIManager.h>
+#import <React/RCTEventDispatcher.h>
 
 @interface DirectedScrollView : RCTScrollView
-
-@property (nonatomic) int horizontallyScrollingSubviewIndex;
-@property (nonatomic) int verticallyScrollingSubviewIndex;
 
 @property (nonatomic, weak) id <DirectedScrollViewDelegate> delegate;
 
@@ -25,40 +21,37 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (_horizontallyScrollingSubviewIndex < 0 || _verticallyScrollingSubviewIndex < 0) return;
-    
     UIView *contentView = [self contentView];
-    
-    NSUInteger subviewCount = contentView.reactSubviews.count;
-    
-    if (_horizontallyScrollingSubviewIndex > 0 && _horizontallyScrollingSubviewIndex < subviewCount)
+
+    for (UIView *subview in contentView.reactSubviews)
     {
-        UIView *horizontallyScrollingSubview = contentView.reactSubviews[_horizontallyScrollingSubviewIndex];
-        
-        CGFloat scrollTop = scrollView.contentOffset.y + self.contentInset.top;
-        
-        // adjust the y offset based on the current zoom scale
-        // if we're zoomed in the offset required will be less, if we're zoomed out it will be more
-        CGFloat yOffset = scrollTop / scrollView.zoomScale;
-        
-        // translate the horizontally scrolling subview by the calculated y offset
-        // this cancels out the vertical translation applied by the scrollview and keeps the y position fixed
-        horizontallyScrollingSubview.transform = CGAffineTransformMakeTranslation(0, yOffset);
-    }
-    
-    if (_verticallyScrollingSubviewIndex > 0 && _verticallyScrollingSubviewIndex < subviewCount)
-    {
-        UIView *verticallyScrollingSubview = contentView.reactSubviews[_verticallyScrollingSubviewIndex];
-        
-        CGFloat scrollLeft = scrollView.contentOffset.x + self.contentInset.left;
-        
-        // adjust the x offset based on the current zoom scale
-        // if we're zoomed in the offset required will be less, if we're zoomed out it will be more
-        CGFloat xOffset = scrollLeft / scrollView.zoomScale;
-        
-        // translate the vertically scrolling subview by the calculated x offset
-        // this cancels out the horizontal translation applied by the scrollview and keeps the x position fixed
-        verticallyScrollingSubview.transform = CGAffineTransformMakeTranslation(xOffset, 0);
+        DirectedScrollViewChild *scrollableChild = (DirectedScrollViewChild*)subview;
+
+        if (subview == nil) continue;
+
+        if (![scrollableChild shouldScrollVertically]) {
+          CGFloat scrollTop = scrollView.contentOffset.y + self.contentInset.top;
+
+          // adjust the y offset based on the current zoom scale
+          // if we're zoomed in the offset required will be less, if we're zoomed out it will be more
+          CGFloat yOffset = scrollTop / scrollView.zoomScale;
+
+          // translate the horizontally scrolling subview by the calculated y offset
+          // this cancels out the vertical translation applied by the scrollview and keeps the y position fixed
+          scrollableChild.transform = CGAffineTransformMakeTranslation(0, yOffset);
+        }
+
+        if (![scrollableChild shouldScrollHorizontally]) {
+          CGFloat scrollLeft = scrollView.contentOffset.x + self.contentInset.left;
+
+          // adjust the x offset based on the current zoom scale
+          // if we're zoomed in the offset required will be less, if we're zoomed out it will be more
+          CGFloat xOffset = scrollLeft / scrollView.zoomScale;
+
+          // translate the vertically scrolling subview by the calculated x offset
+          // this cancels out the horizontal translation applied by the scrollview and keeps the x position fixed
+          scrollableChild.transform = CGAffineTransformMakeTranslation(xOffset, 0);
+        }
     }
 }
 
@@ -85,9 +78,9 @@ RCT_EXPORT_MODULE()
 - (UIView *)view
 {
     DirectedScrollView *directedScrollView = [[DirectedScrollView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
-    
+
     directedScrollView.delegate = self;
-    
+
     return directedScrollView;
 }
 
@@ -111,21 +104,18 @@ RCT_EXPORT_VIEW_PROPERTY(verticallyScrollingSubviewIndex, int)
 
 // RCTScrollView properties
 
-RCT_EXPORT_VIEW_PROPERTY(alwaysBounceHorizontal, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(alwaysBounceVertical, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(bounces, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(bouncesZoom, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(maximumZoomScale, CGFloat)
+RCT_EXPORT_VIEW_PROPERTY(minimumZoomScale, CGFloat)
+RCT_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(canCancelContentTouches, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(centerContent, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(automaticallyAdjustContentInsets, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(decelerationRate, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(directionalLockEnabled, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(maximumZoomScale, CGFloat)
-RCT_EXPORT_VIEW_PROPERTY(minimumZoomScale, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(scrollEnabled, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(zoomScale, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(contentInset, UIEdgeInsets)
 RCT_EXPORT_VIEW_PROPERTY(scrollIndicatorInsets, UIEdgeInsets)
 RCT_EXPORT_VIEW_PROPERTY(snapToInterval, int)

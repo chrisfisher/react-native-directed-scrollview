@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row'

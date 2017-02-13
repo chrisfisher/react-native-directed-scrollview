@@ -19,8 +19,8 @@ public class DirectedScrollView extends ReactViewGroup {
   private static final long SNAP_BACK_ANIMATION_DURATION = 120;
   private static final Interpolator SNAP_BACK_ANIMATION_INTERPOLATOR = new FastOutLinearInInterpolator();
 
-  private float minimumZoomScale = 0.5f;
-  private float maximumZoomScale = 2.0f;
+  private float minimumZoomScale = 1.0f;
+  private float maximumZoomScale = 1.0f;
   private boolean bounces = true;
   private boolean bouncesZoom = true;
 
