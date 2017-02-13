@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import { AppRegistry, StyleSheet, View } from 'react-native'
-import Grid from './src/components/Grid'
+import React, { Component } from 'react';
+import { AppRegistry, StyleSheet, View } from 'react-native';
+import Grid from './src/components/Grid';
 
 export default class example extends Component {
   render() {
@@ -17,6 +17,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
   },
-})
+});
 
-AppRegistry.registerComponent('example', () => example)
+AppRegistry.registerComponent('example', () => example);

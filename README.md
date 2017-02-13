@@ -2,13 +2,25 @@
 
 ![demo](example/rnds-demo.gif)
 
-A natively implemented scrollview component which allows some content to scroll in both directions and other content to only scroll horizontally or vertically.
+A natively implemented scrollview component which lets you specify different scroll directions for child content.
 
-This component extends the default ScrollView component but has a much more limited API. It does not broadcast an `onScroll` event to JavaScript, as the intention was to make the scroll direction of subviews configurable through a declarative API and avoid having to do frame-by-frame calculations in JavaScript for performance reasons.
+The iOS implementation extends the default UIScrollView component, whereas the Android implementation is custom and aims to provide some limited parity with the iOS api.
 
-The implementation follows the same approach that the default ScrollView component uses for sticky section headers.
+The following props are supported in both iOS and Android:
 
-Currently only working in iOS. Android implementation is work in progress.
+| Prop | Description |
+| --- | --- |
+| `minimumZoomScale` | How far the content can zoom out |
+| `maximumZoomScale` | How far the content can zoom in |
+| `bounces` | Whether content bounces at the limits when scrolling |
+| `bouncesZoom` | Whether content bounces at the limits when zooming |
+
+The following props are currently iOS only:
+
+| Prop | Description |
+| --- | --- |
+| `showsVerticalScrollIndicator` | Whether vertical scroll bars are visible |
+| `showsHorizontalScrollIndicator` | Whether horizontal scroll bars are visible |
 
 ## Installation
 
@@ -20,31 +32,40 @@ Currently only working in iOS. Android implementation is work in progress.
 To work properly this component requires that a fixed-size content container be specified through the contentContainerStyle prop.
 
 ```javascript
-import DirectedScrollView from 'react-native-directed-scrollview'
+import ScrollView, { ScrollViewChild } from 'react-native-directed-scrollview';
 ...
 
 export default class Example extends Component {
   render() {
     return (
-      <DirectedScrollView
-        horizontallyScrollingSubviewIndex={1}
-        verticallyScrollingSubviewIndex={2}
-        contentContainerStyle={styles.contentContainer}     
+      <ScrollView
         bounces={true}
-        maximumZoomScale={2}
-        minimumZoomScale={0.5}
+        bouncesZoom={true}
+        maximumZoomScale={1.5}
+        minimumZoomScale={0.75}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.contentContainer}
+        style={styles.container}
       >
-        <MultiDirectionalScrollingContent />        
-        <HorizontallyScrollingContent />  
-        <VerticallyScrollingContent />  
-      </DirectedScrollView>
+        <ScrollViewChild scrollDirection={'both'}>
+          // multi-directional scrolling content here...      
+        </ScrollViewChild>
+        <ScrollViewChild scrollDirection={'vertical'}>
+          // vertically scrolling content here...      
+        </ScrollViewChild>
+        <ScrollViewChild scrollDirection={'horizontal'}>
+          // horizontally scrolling content here...      
+        </ScrollViewChild>
+      </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   contentContainer: {
     height: 1000,
     width: 1000,

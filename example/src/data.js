@@ -20,14 +20,14 @@ export const getCellsByRow = (): Array<Row> => {
   }
 
   return cellsByRow;
-}
+};
 
 export type Cell = {
   id: string;
   title: string;
-}
+};
 
 export type Row = {
   id: string;
   cells: Array<Cell>;
-}
+};

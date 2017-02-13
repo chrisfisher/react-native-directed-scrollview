@@ -1,9 +1,9 @@
 /* @flow */
 
-import React, { Component } from 'react'
-import { Text, View, StyleSheet } from 'react-native'
-import type { Row, Cell } from '../data'
-import colors from '../colors'
+import React, { Component } from 'react';
+import { Text, View, StyleSheet } from 'react-native';
+import type { Row, Cell } from '../data';
+import colors from '../colors';
 
 export default class RowLabels extends Component {
   render() {
@@ -11,7 +11,7 @@ export default class RowLabels extends Component {
       <View style={styles.container}>
         { this.props.cellsByRow.map(row => this._renderRowLabel(row)) }
       </View>
-    )
+    );
   }
 
   _renderRowLabel(row: Row) {
@@ -48,4 +48,4 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 16,
   },
-})
+});

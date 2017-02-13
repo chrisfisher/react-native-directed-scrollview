@@ -1,18 +1,12 @@
 import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import { AppRegistry, StyleSheet, View } from 'react-native';
+import Grid from './src/components/Grid';
 
 export default class example extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>
-          Not yet implemented...
-        </Text>
+        <Grid />
       </View>
     );
   }
@@ -21,14 +15,7 @@ export default class example extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  text: {
-    fontSize: 16,
-    textAlign: 'center',
-    margin: 10,
+    marginTop: 20,
   },
 });
 

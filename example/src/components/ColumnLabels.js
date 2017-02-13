@@ -1,9 +1,9 @@
 /* @flow */
 
-import React, { Component } from 'react'
-import { Text, View, StyleSheet } from 'react-native'
-import type { Cell } from '../data'
-import colors from '../colors'
+import React, { Component } from 'react';
+import { Text, View, StyleSheet } from 'react-native';
+import type { Cell } from '../data';
+import colors from '../colors';
 
 export default class ColumnLabels extends Component {
   render() {
@@ -11,7 +11,7 @@ export default class ColumnLabels extends Component {
       <View style={styles.container}>
         { this.props.cellsByRow[1].cells.map((cell, index) => this._renderColumnLabel(cell, index)) }
       </View>
-    )
+    );
   }
 
   _renderColumnLabel(cell: Cell, index: number) {
@@ -21,7 +21,7 @@ export default class ColumnLabels extends Component {
           {index + 1}
         </Text>
       </View>
-    )
+    );
   }
 }
 
@@ -49,4 +49,4 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 16,
   },
-})
+});

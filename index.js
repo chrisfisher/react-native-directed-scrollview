@@ -1,9 +1,14 @@
+/**
+ * @providesModule react-native-directed-scrollview
+ */
+
 import React, { Component } from 'react';
-import ReactNative, { requireNativeComponent, View, UIManager } from 'react-native';
+import ReactNative, { requireNativeComponent, View, UIManager, StyleSheet, Platform } from 'react-native';
 
-const NativeDirectedScrollView = requireNativeComponent('DirectedScrollView');
+const NativeScrollView = requireNativeComponent('DirectedScrollView');
+const NativeScrollViewChild = requireNativeComponent('DirectedScrollViewChild');
 
-const DirectedScrollView = React.createClass({
+const ScrollView = React.createClass({
   getScrollableNode: function(): any {
     return ReactNative.findNodeHandle(this._scrollViewRef);
   },
@@ -12,14 +17,14 @@ const DirectedScrollView = React.createClass({
       this.getScrollableNode(),
       UIManager.DirectedScrollView.Commands.scrollTo,
       [x || 0, y || 0, animated !== false],
-    );   
+    );
   },
   zoomToFit: function({ animated }) {
      UIManager.dispatchViewManagerCommand(
       this.getScrollableNode(),
       UIManager.DirectedScrollView.Commands.zoomToFit,
       [animated !== false],
-    ); 
+    );
   },
   _scrollViewRef: null,
   _setScrollViewRef: function(ref) {
@@ -27,16 +32,36 @@ const DirectedScrollView = React.createClass({
   },
   render: function() {
     return (
-      <NativeDirectedScrollView {...this.props} ref={this._setScrollViewRef}>
-        <View style={this.props.contentContainerStyle}>
+      <NativeScrollView {...this.props} ref={this._setScrollViewRef}>
+        <View style={this.props.contentContainerStyle} pointerEvents={'box-none'}>
           {this.props.children}
         </View>
-      </NativeDirectedScrollView>
+      </NativeScrollView>
     );
   }
 });
 
-export default DirectedScrollView;
+export default ScrollView;
+
+export const ScrollViewChild = React.createClass({
+  render: function() {
+    return (
+      <NativeScrollViewChild {...this.props} style={[styles.scrollChild, this.props.style]}>
+        {this.props.children}
+      </NativeScrollViewChild>
+    );
+  }
+});
+
+const styles = StyleSheet.create({
+  scrollChild: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+  },
+});
 
 export const scrollViewWillBeginDragging = 'scrollViewWillBeginDragging';
 
