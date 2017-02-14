@@ -13,7 +13,7 @@ The following props are supported:
 | `minimumZoomScale` | `1.0` | How far the content can zoom out. |
 | `maximumZoomScale` | `1.0` | How far the content can zoom in. |
 | `bounces` | `true` | Whether content bounces at the limits when scrolling. |
-| `bouncesZoom` | true` | Whether content bounces at the limits when zooming. |
+| `bouncesZoom` | `true` | Whether content bounces at the limits when zooming. |
 | **ios** `showsVerticalScrollIndicator` | `false` | Whether vertical scroll bars are visible. |
 | **ios** `showsHorizontalScrollIndicator` | `false` | Whether horizontal scroll bars are visible. |
 
@@ -24,7 +24,7 @@ The following props are supported:
 
 ## Usage
 
-To work properly this component requires that a fixed-size content container be specified through the contentContainerStyle prop.
+To work properly this component requires that a fixed-size content container be specified through the **contentContainerStyle** prop.
 
 ```javascript
 import ScrollView, { ScrollViewChild } from 'react-native-directed-scrollview';
