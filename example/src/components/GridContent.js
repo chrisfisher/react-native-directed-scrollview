@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import type { Row, Cell } from '../data';
 import colors from '../colors';
 
@@ -28,9 +28,17 @@ export default class GridContent extends Component {
 
   _renderCell(cell: Cell) {
     return (
-      <View key={cell.id} style={styles.cellContainer}>
-      </View>
+      <TouchableOpacity 
+        key={cell.id}
+        style={styles.cellContainer}
+        onPress={() => { this._onCellPressed(cell.id); }}
+      >
+      </TouchableOpacity>
     );
+  }
+
+  _onCellPressed(cellId: string) {
+    Alert.alert(`Pressed ${cellId}`);
   }
 }
 

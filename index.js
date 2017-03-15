@@ -46,21 +46,11 @@ export default ScrollView;
 export const ScrollViewChild = React.createClass({
   render: function() {
     return (
-      <NativeScrollViewChild {...this.props} style={[styles.scrollChild, this.props.style]}>
+      <NativeScrollViewChild {...this.props}>
         {this.props.children}
       </NativeScrollViewChild>
     );
   }
-});
-
-const styles = StyleSheet.create({
-  scrollChild: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    right: 0,
-    bottom: 0,
-  },
 });
 
 export const scrollViewWillBeginDragging = 'scrollViewWillBeginDragging';

@@ -8,7 +8,7 @@ import colors from '../colors';
 export default class RowLabels extends Component {
   render() {
     return (
-      <View style={styles.container}>
+      <View style={styles.container} pointerEvents={'box-none'}>
         { this.props.cellsByRow.map(row => this._renderRowLabel(row)) }
       </View>
     );
@@ -16,7 +16,7 @@ export default class RowLabels extends Component {
 
   _renderRowLabel(row: Row) {
     return (
-      <View key={row.id} style={styles.rowLabel}>
+      <View key={row.id} style={styles.rowLabel} pointerEvents={'box-none'}>
         <Text style={styles.rowTitle}>
           Row label
         </Text>
@@ -30,15 +30,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   rowLabel: {
-    height: 120,
-    flex: 1,
+    height: 120,    
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center',    
   },
   rowTitle: {
     backgroundColor: colors.darkPurple,

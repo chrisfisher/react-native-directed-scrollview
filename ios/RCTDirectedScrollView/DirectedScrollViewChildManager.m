@@ -36,6 +36,8 @@ RCT_EXPORT_MODULE()
 {
     DirectedScrollViewChild *directedScrollViewChild = [[DirectedScrollViewChild alloc] init];
 
+    directedScrollViewChild.pointerEvents = RCTPointerEventsBoxNone;
+
     return directedScrollViewChild;
 }
 

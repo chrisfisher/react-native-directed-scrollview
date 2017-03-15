@@ -26,10 +26,10 @@ export default class Grid extends Component {
         <ScrollViewChild scrollDirection={'both'}>
           <GridContent cellsByRow={cellsByRow} />
         </ScrollViewChild>
-        <ScrollViewChild scrollDirection={'vertical'}>
+        <ScrollViewChild scrollDirection={'vertical'} style={styles.rowLabelsContainer}>
           <RowLabels cellsByRow={cellsByRow} />
         </ScrollViewChild>
-        <ScrollViewChild scrollDirection={'horizontal'}>
+        <ScrollViewChild scrollDirection={'horizontal'} style={styles.columnLabelsContainer}>
           <ColumnLabels cellsByRow={cellsByRow} />
         </ScrollViewChild>
       </ScrollView>
@@ -44,5 +44,19 @@ const styles = StyleSheet.create({
   contentContainer: {
     height: 1080,
     width: 1080,
+  },
+  rowLabelsContainer: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 100,
+  },
+  columnLabelsContainer: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    height: 30,
   },
 });

@@ -84,13 +84,6 @@ RCT_EXPORT_MODULE()
     return directedScrollView;
 }
 
-
-// RCTDirectedScrollView properties
-
-RCT_EXPORT_VIEW_PROPERTY(horizontallyScrollingSubviewIndex, int)
-RCT_EXPORT_VIEW_PROPERTY(verticallyScrollingSubviewIndex, int)
-
-
 // RCTDirectedScrollViewDelegate methods
 
 -(void)scrollViewWillBeginDragging {

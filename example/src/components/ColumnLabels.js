@@ -8,7 +8,7 @@ import colors from '../colors';
 export default class ColumnLabels extends Component {
   render() {
     return (
-      <View style={styles.container}>
+      <View style={styles.container} pointerEvents={'box-none'}>
         { this.props.cellsByRow[1].cells.map((cell, index) => this._renderColumnLabel(cell, index)) }
       </View>
     );
@@ -16,7 +16,7 @@ export default class ColumnLabels extends Component {
 
   _renderColumnLabel(cell: Cell, index: number) {
     return (
-      <View key={cell.id} style={styles.columnLabel}>
+      <View key={cell.id} style={styles.columnLabel} pointerEvents={'box-none'}>
         <Text style={styles.columnTitle}>
           {index + 1}
         </Text>
@@ -27,16 +27,12 @@ export default class ColumnLabels extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row'
   },
   columnLabel: {
     width: 120,
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
