@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.ScaleGestureDetector;
 import android.view.animation.Interpolator;
 
+import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.views.view.ReactViewGroup;
 
 import java.util.ArrayList;
@@ -261,6 +262,15 @@ public class DirectedScrollView extends ReactViewGroup {
 
   public void setBouncesZoom(final boolean bouncesZoom) {
     this.bouncesZoom = bouncesZoom;
+  }
+
+  public void scrollTo(Double x, Double y, Boolean animated) {
+    float convertedX = PixelUtil.toPixelFromDIP(x);
+    float convertedY = PixelUtil.toPixelFromDIP(y);
+    scrollX = -convertedX;
+    scrollY = -convertedY;
+
+    translateChildren(animated);
   }
 
   @Override

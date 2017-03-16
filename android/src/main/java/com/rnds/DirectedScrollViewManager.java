@@ -5,6 +5,10 @@ import android.support.annotation.Nullable;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.common.MapBuilder;
+
+import java.util.Map;
 
 class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
 
@@ -16,6 +20,23 @@ class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
   @Override
   public DirectedScrollView createViewInstance(ThemedReactContext context) {
     return new DirectedScrollView(context);
+  }
+
+  @Override
+  public Map<String,Integer> getCommandsMap() {
+    return MapBuilder.of("scrollTo", 1);
+  }
+
+  @Override
+  public void receiveCommand(DirectedScrollView view, int commandType, @Nullable ReadableArray args) {
+    super.receiveCommand(view, commandType, args);
+    if (commandType == 1) {
+      Double translateX = args.getDouble(0);
+      Double translateY = args.getDouble(1);
+      Boolean animated = args.getBoolean(2);
+
+      view.scrollTo(translateX, translateY, animated);
+    }
   }
 
   @ReactProp(name = "minimumZoomScale", defaultFloat = 1.0f)
