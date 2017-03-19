@@ -17,6 +17,12 @@ The following props are supported:
 | **ios** `showsVerticalScrollIndicator` | `true` | Whether vertical scroll bars are visible. |
 | **ios** `showsHorizontalScrollIndicator` | `true` | Whether horizontal scroll bars are visible. |
 
+The following methods are supported:
+
+| Method | Example | Description |
+| --- | --- | --- |
+| `scrollTo` | `scrollTo({x: 100, y: 100, animated: true})` | Scrolls to a given x and y offset. |
+
 ## Installation
 
 - `npm install react-native-directed-scrollview --save`
