@@ -10,6 +10,7 @@ import android.view.ScaleGestureDetector;
 import android.view.animation.Interpolator;
 
 import com.facebook.react.uimanager.PixelUtil;
+import com.facebook.react.views.scroll.ReactScrollViewHelper;
 import com.facebook.react.views.view.ReactViewGroup;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class DirectedScrollView extends ReactViewGroup {
   private float startTouchY;
   private float scaleFactor = 1.0f;
   private boolean isScaleInProgress;
+  private boolean isScrollInProgress;
 
   private ScaleGestureDetector scaleDetector;
 
@@ -47,6 +49,13 @@ public class DirectedScrollView extends ReactViewGroup {
     super.onAttachedToWindow();
 
     anchorChildren();
+  }
+
+  @Override
+  public boolean onInterceptTouchEvent(final MotionEvent motionEvent) {
+    ReactScrollViewHelper.emitScrollBeginDragEvent(this);
+    isScrollInProgress = true;
+    return true;
   }
 
   private void initGestureListeners(Context context) {
@@ -125,6 +134,11 @@ public class DirectedScrollView extends ReactViewGroup {
   }
 
   private void onActionUp() {
+    if (isScrollInProgress) {
+      ReactScrollViewHelper.emitScrollEndDragEvent(this);
+      isScrollInProgress = false;
+    }
+
     if (bounces) {
       clampAndTranslateChildren(true);
     }
@@ -271,10 +285,5 @@ public class DirectedScrollView extends ReactViewGroup {
     scrollY = -convertedY;
 
     translateChildren(animated);
-  }
-
-  @Override
-  public boolean onInterceptTouchEvent(final MotionEvent ev) {
-    return true;
   }
 }

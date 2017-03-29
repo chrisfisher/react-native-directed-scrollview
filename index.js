@@ -4,11 +4,16 @@
 
 import React, { Component } from 'react';
 import ReactNative, { requireNativeComponent, View, UIManager, StyleSheet, Platform } from 'react-native';
+import ScrollResponder from 'react-native/Libraries/Components/ScrollResponder';
 
 const NativeScrollView = requireNativeComponent('DirectedScrollView');
 const NativeScrollViewChild = requireNativeComponent('DirectedScrollViewChild');
 
 const ScrollView = React.createClass({
+  mixins: [ScrollResponder.Mixin],
+  getInitialState: function() {
+    return this.scrollResponderMixinGetInitialState();
+  },
   getScrollableNode: function(): any {
     return ReactNative.findNodeHandle(this._scrollViewRef);
   },
@@ -32,7 +37,12 @@ const ScrollView = React.createClass({
   },
   render: function() {
     return (
-      <NativeScrollView {...this.props} ref={this._setScrollViewRef}>
+      <NativeScrollView 
+        {...this.props}
+        ref={this._setScrollViewRef}
+        onScrollBeginDrag={this.scrollResponderHandleScrollBeginDrag}
+        onScrollEndDrag={this.scrollResponderHandleScrollEndDrag}
+      >
         <View style={this.props.contentContainerStyle} pointerEvents={'box-none'}>
           {this.props.children}
         </View>
