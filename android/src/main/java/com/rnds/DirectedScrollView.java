@@ -10,6 +10,7 @@ import android.view.ScaleGestureDetector;
 import android.view.animation.Interpolator;
 
 import com.facebook.react.uimanager.PixelUtil;
+import com.facebook.react.uimanager.events.NativeGestureUtil;
 import com.facebook.react.views.scroll.ReactScrollViewHelper;
 import com.facebook.react.views.view.ReactViewGroup;
 
@@ -54,7 +55,7 @@ public class DirectedScrollView extends ReactViewGroup {
   @Override
   public boolean onInterceptTouchEvent(final MotionEvent motionEvent) {
     ReactScrollViewHelper.emitScrollBeginDragEvent(this);
-    isScrollInProgress = true;
+    
     return true;
   }
 
@@ -118,7 +119,11 @@ public class DirectedScrollView extends ReactViewGroup {
   }
 
   private void onActionMove(MotionEvent motionEvent) {
+    NativeGestureUtil.notifyNativeGestureStarted(this, motionEvent);
+    
     if (isScaleInProgress) return;
+
+    isScrollInProgress = true;
 
     float deltaX = motionEvent.getX() - startTouchX;
     float deltaY = motionEvent.getY() - startTouchY;
@@ -131,6 +136,8 @@ public class DirectedScrollView extends ReactViewGroup {
     } else {
       clampAndTranslateChildren(false);
     }
+
+    ReactScrollViewHelper.emitScrollEvent(this);
   }
 
   private void onActionUp() {

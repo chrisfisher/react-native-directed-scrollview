@@ -14,6 +14,12 @@ const ScrollView = React.createClass({
   getInitialState: function() {
     return this.scrollResponderMixinGetInitialState();
   },
+  setNativeProps: function(props) {
+    this._scrollViewRef && this._scrollViewRef.setNativeProps(props);
+  },
+  getScrollResponder: function() {
+    return this;
+  },
   getScrollableNode: function(): any {
     return ReactNative.findNodeHandle(this._scrollViewRef);
   },
@@ -42,6 +48,16 @@ const ScrollView = React.createClass({
         ref={this._setScrollViewRef}
         onScrollBeginDrag={this.scrollResponderHandleScrollBeginDrag}
         onScrollEndDrag={this.scrollResponderHandleScrollEndDrag}
+        onScroll={this.scrollResponderHandleScroll}
+        onMomentumScrollBegin={this.scrollResponderHandleMomentumScrollBegin}
+        onMomentumScrollEnd={this.scrollResponderHandleMomentumScrollEnd}
+        onStartShouldSetResponder={this.scrollResponderHandleStartShouldSetResponderCapture}
+        onScrollShouldSetResponder={this.scrollResponderHandleScrollShouldSetResponder}
+        onResponderGrant={this.scrollResponderHandleResponderGrant}
+        onResponderTerminationRequest={this.scrollResponderHandleTerminationRequest}
+        onResponderTerminate={this.scrollResponderHandleTerminate}
+        onResponderRelease={this.scrollResponderHandleResponderRelease}
+        onResponderReject={this.scrollResponderHandleResponderReject}
       >
         <View style={this.props.contentContainerStyle} pointerEvents={'box-none'}>
           {this.props.children}
