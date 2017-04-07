@@ -27,6 +27,8 @@ public class DirectedScrollView extends ReactViewGroup {
   private boolean bounces = true;
   private boolean bouncesZoom = true;
 
+  private float pivotX;
+  private float pivotY;
   private float scrollX;
   private float scrollY;
   private float startScrollX;
@@ -92,6 +94,9 @@ public class DirectedScrollView extends ReactViewGroup {
       @Override
       public boolean onScale(ScaleGestureDetector detector) {
         scaleFactor *= detector.getScaleFactor();
+
+        pivotX = detector.getFocusX();
+        pivotY = detector.getFocusY();
 
         if (bouncesZoom) {
           scaleChildren(false);
@@ -183,6 +188,10 @@ public class DirectedScrollView extends ReactViewGroup {
     List<DirectedScrollViewChild> scrollableChildren = getScrollableChildren();
 
     for (DirectedScrollViewChild scrollableChild : scrollableChildren) {
+      if (scrollableChild.getShouldScrollHorizontally())
+        scrollableChild.setPivotX(pivotX - scrollX);
+      if (scrollableChild.getShouldScrollVertically())
+        scrollableChild.setPivotY(pivotY - scrollY);
       if (animated) {
         animateProperty(scrollableChild, "scaleX", scrollableChild.getScaleX(), scaleFactor);
         animateProperty(scrollableChild, "scaleY", scrollableChild.getScaleY(), scaleFactor);
@@ -294,3 +303,4 @@ public class DirectedScrollView extends ReactViewGroup {
     translateChildren(animated);
   }
 }
+
