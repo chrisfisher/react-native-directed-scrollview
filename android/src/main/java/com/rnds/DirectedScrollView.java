@@ -5,7 +5,6 @@ import android.content.Context;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ScaleGestureDetector;
 import android.view.animation.Interpolator;
 
@@ -254,12 +253,10 @@ public class DirectedScrollView extends ReactViewGroup {
   }
 
   private ArrayList<DirectedScrollViewChild> getScrollableChildren() {
-    ViewGroup contentContainer = (ViewGroup)getChildAt(0);
-
     ArrayList<DirectedScrollViewChild> scrollableChildren = new ArrayList<>();
 
-    for (int i = 0; i < contentContainer.getChildCount(); i++) {
-      View childView = contentContainer.getChildAt(i);
+    for (int i = 0; i < getChildCount(); i++) {
+      View childView = getChildAt(i);
 
       if (childView instanceof DirectedScrollViewChild) {
         scrollableChildren.add((DirectedScrollViewChild) childView);
