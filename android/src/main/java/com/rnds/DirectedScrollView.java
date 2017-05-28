@@ -2,10 +2,10 @@ package com.rnds;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Matrix;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ScaleGestureDetector;
 import android.view.animation.Interpolator;
 
@@ -67,7 +67,6 @@ public class DirectedScrollView extends ReactViewGroup {
 
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {
-
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
           case MotionEvent.ACTION_DOWN:
             onActionDown(motionEvent);
@@ -92,22 +91,38 @@ public class DirectedScrollView extends ReactViewGroup {
     scaleDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
       @Override
+      public boolean onScaleBegin(ScaleGestureDetector detector) {
+        if (isScrollInProgress) {
+          return false;
+        }
+
+        float x = detector.getFocusX();
+        float y = detector.getFocusY();
+        pivotChildren(x, y);
+        updateChildren();
+        return true;
+      }
+
+      @Override
       public boolean onScale(ScaleGestureDetector detector) {
         scaleFactor *= detector.getScaleFactor();
+        updateChildren();
+        return true;
+      }
 
-        pivotX = detector.getFocusX();
-        pivotY = detector.getFocusY();
-
+      private void updateChildren() {
         if (bouncesZoom) {
           scaleChildren(false);
         } else {
           clampAndScaleChildren(false);
-          clampAndTranslateChildren(false);
         }
 
+        if (bounces) {
+          translateChildren(false);
+        } else {
+          clampAndTranslateChildren(false);
+        }
         invalidate();
-
-        return true;
       }
     });
   }
@@ -151,28 +166,35 @@ public class DirectedScrollView extends ReactViewGroup {
       isScrollInProgress = false;
     }
 
-    if (bounces) {
-      clampAndTranslateChildren(true);
-    }
-
     if (bouncesZoom) {
       clampAndScaleChildren(true);
+    }
+
+    if (bounces) {
+      clampAndTranslateChildren(true);
     }
 
     isScaleInProgress = false;
   }
 
   private void clampAndTranslateChildren(boolean animated) {
-    if (getMaxScrollX() > 0) {
-      scrollX = clamp(scrollX, -getMaxScrollX(), 0);
+    // need to use the 0,0 points after scale transforms for min/max
+    float[] minPoints = transformPoints(new float[] { 0, 0 });
+    float minX = minPoints[0];
+    float minY = minPoints[1];
+    float maxX = minPoints[0] + getMaxScrollX();
+    float maxY = minPoints[1] + getMaxScrollY();
+
+    if (maxX > minX) {
+      scrollX = clamp(scrollX, -maxX, -minX);
     } else {
-      scrollX = 0;
+      scrollX = -minX;
     }
 
-    if (getMaxScrollY() > 0) {
-      scrollY = clamp(scrollY, -getMaxScrollY(), 0);
+    if (maxY > minY) {
+      scrollY = clamp(scrollY, -maxY, -minY);
     } else {
-      scrollY = 0;
+      scrollY = -minY;
     }
 
     translateChildren(animated);
@@ -184,14 +206,45 @@ public class DirectedScrollView extends ReactViewGroup {
     scaleChildren(animated);
   }
 
+  private void pivotChildren(float newPivotX, float newPivotY) {
+    float oldPivotX = pivotX;
+    float oldPivotY = pivotY;
+    pivotX = newPivotX - scrollX;
+    pivotY = newPivotY - scrollY;
+
+    // changing the  pivot changes the view translation, need to adjust the scroll to compensate
+    // otherwise multiple zooms causes the content to jump
+    // code adapted from https://stackoverflow.com/a/14522916
+    scrollX += (oldPivotX - pivotX) * (1 - scaleFactor);
+    scrollY += (oldPivotY - pivotY) * (1 - scaleFactor);
+
+    List<DirectedScrollViewChild> scrollableChildren = getScrollableChildren();
+    for (DirectedScrollViewChild scrollableChild : scrollableChildren) {
+      if (scrollableChild.getShouldScrollHorizontally()) {
+        scrollableChild.setTranslationX(scrollX);
+        scrollableChild.setPivotX(pivotX);
+      }
+      if (scrollableChild.getShouldScrollVertically()) {
+        scrollableChild.setTranslationY(scrollY);
+        scrollableChild.setPivotY(pivotY);
+      }
+    }
+  }
+
+  private float[] transformPoints(float[] points) {
+    float[] transformedPoints = new float[points.length];
+
+    Matrix matrix = new Matrix();
+    matrix.setScale(scaleFactor, scaleFactor, pivotX, pivotY);
+    matrix.mapPoints(transformedPoints, points);
+
+    return transformedPoints;
+  }
+
   private void scaleChildren(boolean animated) {
     List<DirectedScrollViewChild> scrollableChildren = getScrollableChildren();
 
     for (DirectedScrollViewChild scrollableChild : scrollableChildren) {
-      if (scrollableChild.getShouldScrollHorizontally())
-        scrollableChild.setPivotX(pivotX - scrollX);
-      if (scrollableChild.getShouldScrollVertically())
-        scrollableChild.setPivotY(pivotY - scrollY);
       if (animated) {
         animateProperty(scrollableChild, "scaleX", scrollableChild.getScaleX(), scaleFactor);
         animateProperty(scrollableChild, "scaleY", scrollableChild.getScaleY(), scaleFactor);
@@ -254,21 +307,17 @@ public class DirectedScrollView extends ReactViewGroup {
     return getChildAt(0).getHeight() * scaleFactor;
   }
 
-  private float getMaxScrollX() {
-    return getContentContainerWidth() - getWidth();
-  }
+  private float getMaxScrollX() { return getContentContainerWidth() - getWidth(); }
 
   private float getMaxScrollY() {
     return getContentContainerHeight() - getHeight();
   }
 
   private ArrayList<DirectedScrollViewChild> getScrollableChildren() {
-    ViewGroup contentContainer = (ViewGroup)getChildAt(0);
-
     ArrayList<DirectedScrollViewChild> scrollableChildren = new ArrayList<>();
 
-    for (int i = 0; i < contentContainer.getChildCount(); i++) {
-      View childView = contentContainer.getChildAt(i);
+    for (int i = 0; i < getChildCount(); i++) {
+      View childView = getChildAt(i);
 
       if (childView instanceof DirectedScrollViewChild) {
         scrollableChildren.add((DirectedScrollViewChild) childView);
@@ -303,4 +352,3 @@ public class DirectedScrollView extends ReactViewGroup {
     translateChildren(animated);
   }
 }
-
