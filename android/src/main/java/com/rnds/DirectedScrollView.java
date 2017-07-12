@@ -2,6 +2,7 @@ package com.rnds;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Matrix;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,6 +27,8 @@ public class DirectedScrollView extends ReactViewGroup {
   private boolean bounces = true;
   private boolean bouncesZoom = true;
 
+  private float pivotX;
+  private float pivotY;
   private float scrollX;
   private float scrollY;
   private float startScrollX;
@@ -89,19 +92,38 @@ public class DirectedScrollView extends ReactViewGroup {
     scaleDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
       @Override
+      public boolean onScaleBegin(ScaleGestureDetector detector) {
+        if (isScrollInProgress) {
+          return false;
+        }
+
+        float x = detector.getFocusX();
+        float y = detector.getFocusY();
+        pivotChildren(x, y);
+        updateChildren();
+        return true;
+      }
+
+      @Override
       public boolean onScale(ScaleGestureDetector detector) {
         scaleFactor *= detector.getScaleFactor();
+        updateChildren();
+        return true;
+      }
 
+      private void updateChildren() {
         if (bouncesZoom) {
           scaleChildren(false);
         } else {
           clampAndScaleChildren(false);
-          clampAndTranslateChildren(false);
         }
 
+        if (bounces) {
+          translateChildren(false);
+        } else {
+          clampAndTranslateChildren(false);
+        }
         invalidate();
-
-        return true;
       }
     });
   }
@@ -157,16 +179,22 @@ public class DirectedScrollView extends ReactViewGroup {
   }
 
   private void clampAndTranslateChildren(boolean animated) {
-    if (getMaxScrollX() > 0) {
-      scrollX = clamp(scrollX, -getMaxScrollX(), 0);
+    float[] minPoints = transformPoints(new float[] { 0, 0 });
+    float minX = minPoints[0];
+    float minY = minPoints[1];
+    float maxX = minPoints[0] + getMaxScrollX();
+    float maxY = minPoints[1] + getMaxScrollY();
+
+    if (maxX > minX) {
+      scrollX = clamp(scrollX, -maxX, -minX);
     } else {
-      scrollX = 0;
+      scrollX = -minX;
     }
 
-    if (getMaxScrollY() > 0) {
-      scrollY = clamp(scrollY, -getMaxScrollY(), 0);
+    if (maxY > minY) {
+      scrollY = clamp(scrollY, -maxY, -minY);
     } else {
-      scrollY = 0;
+      scrollY = -minY;
     }
 
     translateChildren(animated);
@@ -214,6 +242,28 @@ public class DirectedScrollView extends ReactViewGroup {
     }
   }
 
+  private void pivotChildren(float newPivotX, float newPivotY) {
+    float oldPivotX = pivotX;
+    float oldPivotY = pivotY;
+    pivotX = newPivotX - scrollX;
+    pivotY = newPivotY - scrollY;
+
+    scrollX += (oldPivotX - pivotX) * (1 - scaleFactor);
+    scrollY += (oldPivotY - pivotY) * (1 - scaleFactor);
+
+    List<DirectedScrollViewChild> scrollableChildren = getScrollableChildren();
+    for (DirectedScrollViewChild scrollableChild : scrollableChildren) {
+      if (scrollableChild.getShouldScrollHorizontally()) {
+        scrollableChild.setTranslationX(scrollX);
+        scrollableChild.setPivotX(pivotX);
+      }
+      if (scrollableChild.getShouldScrollVertically()) {
+        scrollableChild.setTranslationY(scrollY);
+        scrollableChild.setPivotY(pivotY);
+      }
+    }
+  }
+
   private void anchorChildren() {
     List<DirectedScrollViewChild> scrollableChildren = getScrollableChildren();
 
@@ -221,6 +271,16 @@ public class DirectedScrollView extends ReactViewGroup {
       scrollableChild.setPivotY(0);
       scrollableChild.setPivotX(0);
     }
+  }
+
+  private float[] transformPoints(float[] points) {
+    float[] transformedPoints = new float[points.length];
+
+    Matrix matrix = new Matrix();
+    matrix.setScale(scaleFactor, scaleFactor, pivotX, pivotY);
+    matrix.mapPoints(transformedPoints, points);
+
+    return transformedPoints;
   }
 
   private void animateProperty(Object target, String property, float start, float end) {
