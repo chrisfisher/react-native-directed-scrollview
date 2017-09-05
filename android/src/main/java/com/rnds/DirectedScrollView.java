@@ -158,12 +158,12 @@ public class DirectedScrollView extends ReactViewGroup {
       clampAndTranslateChildren(false);
     }
 
-    ReactScrollViewHelper.emitScrollEvent(this);
+    ReactScrollViewHelper.emitScrollEvent(this, 0, 0);
   }
 
   private void onActionUp() {
     if (isScrollInProgress) {
-      ReactScrollViewHelper.emitScrollEndDragEvent(this);
+      ReactScrollViewHelper.emitScrollEndDragEvent(this, 0, 0);
       isScrollInProgress = false;
     }
 

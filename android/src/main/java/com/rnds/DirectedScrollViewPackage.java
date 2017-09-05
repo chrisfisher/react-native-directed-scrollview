@@ -18,11 +18,6 @@ public class DirectedScrollViewPackage implements ReactPackage {
   }
 
   @Override
-  public List<Class<? extends JavaScriptModule>> createJSModules() {
-    return Collections.emptyList();
-  }
-
-  @Override
   public List<ViewManager> createViewManagers(ReactApplicationContext reactApplicationContext) {
     ArrayList<ViewManager> viewManagers = new ArrayList<ViewManager>();
     viewManagers.add(new DirectedScrollViewManager());
