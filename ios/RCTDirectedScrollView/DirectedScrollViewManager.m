@@ -21,6 +21,7 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    [super scrollViewDidScroll:scrollView];
     UIView *contentView = [self contentView];
 
     for (UIView *subview in contentView.reactSubviews)
@@ -56,12 +57,14 @@
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    [super scrollViewWillBeginDragging:scrollView];
     if ([self.delegate respondsToSelector:@selector(scrollViewWillBeginDragging)]) {
         [self.delegate scrollViewWillBeginDragging];
     }
 }
 
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    [super scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
     if ([self.delegate respondsToSelector:@selector(scrollViewDidEndDragging)]) {
         [self.delegate scrollViewDidEndDragging];
     }
@@ -112,6 +115,7 @@ RCT_EXPORT_VIEW_PROPERTY(scrollEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(contentInset, UIEdgeInsets)
 RCT_EXPORT_VIEW_PROPERTY(scrollIndicatorInsets, UIEdgeInsets)
 RCT_EXPORT_VIEW_PROPERTY(snapToInterval, int)
+RCT_EXPORT_VIEW_PROPERTY(scrollEventThrottle, NSTimeInterval)
 RCT_EXPORT_VIEW_PROPERTY(snapToAlignment, NSString)
 RCT_EXPORT_VIEW_PROPERTY(onScrollBeginDrag, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onScroll, RCTDirectEventBlock)
