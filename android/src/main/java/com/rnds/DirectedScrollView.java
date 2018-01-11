@@ -6,6 +6,8 @@ import android.graphics.Matrix;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewParent;
 import android.view.ScaleGestureDetector;
 import android.view.animation.Interpolator;
 
@@ -65,7 +67,8 @@ public class DirectedScrollView extends ReactViewGroup {
 
     int action = motionEvent.getAction();
     if (action == MotionEvent.ACTION_UP | action == MotionEvent.ACTION_CANCEL) {
-      onFinishDragging();
+      isScrollInProgress = false;
+      isScaleInProgress = false;
       return false;
     }
 
@@ -89,10 +92,10 @@ public class DirectedScrollView extends ReactViewGroup {
       case MotionEvent.ACTION_MOVE:
         float diffX = Math.abs(motionEvent.getX() - lastPositionX);
         float diffY = Math.abs(motionEvent.getY() - lastPositionY);
-        if (diffX > touchSlop || diffY > touchSlop) {
+        if (isScaleInProgress || diffX > touchSlop || diffY > touchSlop) {
           lastPositionX = motionEvent.getX();
           lastPositionY = motionEvent.getY();
-          onDrag();
+          disallowInterceptTouchEventsForParent();
           return true;
         }
         break;
@@ -106,7 +109,6 @@ public class DirectedScrollView extends ReactViewGroup {
   public boolean onTouchEvent(MotionEvent motionEvent) {
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
-        onDrag();
         onActionDown(motionEvent);
         break;
       case MotionEvent.ACTION_POINTER_DOWN:
@@ -117,7 +119,6 @@ public class DirectedScrollView extends ReactViewGroup {
         break;
       case MotionEvent.ACTION_UP:
         onActionUp();
-        onFinishDragging();
         break;
     }
 
@@ -125,15 +126,6 @@ public class DirectedScrollView extends ReactViewGroup {
 
     return true;
 
-  }
-
-  private void onDrag() {
-    isDragging = true;
-    disallowInterceptTouchEventsForParent();
-  }
-
-  private void onFinishDragging() {
-    isDragging = false;
   }
 
   private void disallowInterceptTouchEventsForParent() {
@@ -148,10 +140,6 @@ public class DirectedScrollView extends ReactViewGroup {
 
       @Override
       public boolean onScaleBegin(ScaleGestureDetector detector) {
-        if (isScrollInProgress) {
-          return false;
-        }
-
         float x = detector.getFocusX();
         float y = detector.getFocusY();
         pivotChildren(x, y);
