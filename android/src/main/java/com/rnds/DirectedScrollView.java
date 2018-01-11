@@ -38,6 +38,9 @@ public class DirectedScrollView extends ReactViewGroup {
   private float scaleFactor = 1.0f;
   private boolean isScaleInProgress;
   private boolean isScrollInProgress;
+  private float touchSlop;
+  private float lastPositionX, lastPositionY;
+  private boolean isDragging;
 
   private ScaleGestureDetector scaleDetector;
 
@@ -45,6 +48,8 @@ public class DirectedScrollView extends ReactViewGroup {
     super(context);
 
     initGestureListeners(context);
+
+    touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
   }
 
   @Override
@@ -57,38 +62,88 @@ public class DirectedScrollView extends ReactViewGroup {
   @Override
   public boolean onInterceptTouchEvent(final MotionEvent motionEvent) {
     ReactScrollViewHelper.emitScrollBeginDragEvent(this);
-    
+
+    int action = motionEvent.getAction();
+    if (action == MotionEvent.ACTION_UP | action == MotionEvent.ACTION_CANCEL) {
+      onFinishDragging();
+      return false;
+    }
+
+    if (action == MotionEvent.ACTION_MOVE & isDragging) {
+      return true;
+    }
+
+    if (super.onInterceptTouchEvent(motionEvent)) {
+      return true;
+    }
+
+    switch (action) {
+      case MotionEvent.ACTION_DOWN:
+        lastPositionX = motionEvent.getX();
+        lastPositionY = motionEvent.getY();
+        onActionDown(motionEvent);
+        break;
+      case MotionEvent.ACTION_POINTER_DOWN:
+        onActionPointerDown();
+        break;
+      case MotionEvent.ACTION_MOVE:
+        float diffX = Math.abs(motionEvent.getX() - lastPositionX);
+        float diffY = Math.abs(motionEvent.getY() - lastPositionY);
+        if (diffX > touchSlop || diffY > touchSlop) {
+          lastPositionX = motionEvent.getX();
+          lastPositionY = motionEvent.getY();
+          onDrag();
+          return true;
+        }
+        break;
+    }
+
+
+    return false;
+  }
+
+  @Override
+  public boolean onTouchEvent(MotionEvent motionEvent) {
+    switch (motionEvent.getAction()) {
+      case MotionEvent.ACTION_DOWN:
+        onDrag();
+        onActionDown(motionEvent);
+        break;
+      case MotionEvent.ACTION_POINTER_DOWN:
+        onActionPointerDown();
+        break;
+      case MotionEvent.ACTION_MOVE:
+        onActionMove(motionEvent);
+        break;
+      case MotionEvent.ACTION_UP:
+        onActionUp();
+        onFinishDragging();
+        break;
+    }
+
+    scaleDetector.onTouchEvent(motionEvent);
+
     return true;
+
+  }
+
+  private void onDrag() {
+    isDragging = true;
+    disallowInterceptTouchEventsForParent();
+  }
+
+  private void onFinishDragging() {
+    isDragging = false;
+  }
+
+  private void disallowInterceptTouchEventsForParent() {
+    ViewParent parent = getParent();
+    if (parent != null) {
+      parent.requestDisallowInterceptTouchEvent(true);
+    }
   }
 
   private void initGestureListeners(Context context) {
-
-    setOnTouchListener(new View.OnTouchListener() {
-
-      @Override
-      public boolean onTouch(View view, MotionEvent motionEvent) {
-
-        switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-          case MotionEvent.ACTION_DOWN:
-            onActionDown(motionEvent);
-            break;
-          case MotionEvent.ACTION_POINTER_DOWN:
-            onActionPointerDown();
-            break;
-          case MotionEvent.ACTION_MOVE:
-            onActionMove(motionEvent);
-            break;
-          case MotionEvent.ACTION_UP:
-            onActionUp();
-            break;
-        }
-
-        scaleDetector.onTouchEvent(motionEvent);
-
-        return true;
-      }
-    });
-
     scaleDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
       @Override
