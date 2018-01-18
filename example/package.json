@@ -7,15 +7,15 @@
 		"test": "jest"
 	},
 	"dependencies": {
-		"react": "16.0.0-alpha.12",
-		"react-native": "0.48.1",
-    "react-native-directed-scrollview": "file:../"
+		"react": "16.0.0",
+		"react-native": "0.51.0",
+		"react-native-directed-scrollview": "1.3.2"
 	},
 	"devDependencies": {
 		"babel-jest": "18.0.0",
 		"babel-preset-react-native": "1.9.1",
 		"jest": "18.1.0",
-		"react-test-renderer": "16.0.0-alpha.12"
+		"react-test-renderer": "16.0.0"
 	},
 	"jest": {
 		"preset": "react-native"

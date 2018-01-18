@@ -10,7 +10,7 @@ import { getCellsByRow } from '../data';
 
 export default class Grid extends Component {
   render() {
-    const cellsByRow = getCellsByRow()
+    const cellsByRow = getCellsByRow();
 
     return (
       <ScrollView
