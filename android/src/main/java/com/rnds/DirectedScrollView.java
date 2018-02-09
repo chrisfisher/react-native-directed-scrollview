@@ -42,6 +42,7 @@ public class DirectedScrollView extends ReactViewGroup {
   private float startTouchX;
   private float startTouchY;
   private float scaleFactor = 1.0f;
+  private boolean scrollEnabled = true;
   private boolean isScaleInProgress;
   private boolean isScrollInProgress;
   private float touchSlop;
@@ -69,6 +70,8 @@ public class DirectedScrollView extends ReactViewGroup {
 
   @Override
   public boolean onInterceptTouchEvent(final MotionEvent motionEvent) {
+    if (scrollEnabled == false) return false;
+
     emitScrollEvent(ScrollEventType.BEGIN_DRAG, 0, 0);
 
     int action = motionEvent.getAction();
@@ -399,6 +402,10 @@ public class DirectedScrollView extends ReactViewGroup {
 
   public void setMinimumZoomScale(final float minimumZoomScale) {
     this.minimumZoomScale = minimumZoomScale;
+  }
+
+  public void setScrollEnabled(final boolean scrollEnabled) {
+    this.scrollEnabled = scrollEnabled;
   }
 
   public void setBounces(final boolean bounces) {
