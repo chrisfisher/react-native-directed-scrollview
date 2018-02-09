@@ -38,6 +38,7 @@ public class DirectedScrollView extends ReactViewGroup {
   private float startTouchX;
   private float startTouchY;
   private float scaleFactor = 1.0f;
+  private boolean scrollEnabled = true;
   private boolean isScaleInProgress;
   private boolean isScrollInProgress;
   private float touchSlop;
@@ -63,6 +64,8 @@ public class DirectedScrollView extends ReactViewGroup {
 
   @Override
   public boolean onInterceptTouchEvent(final MotionEvent motionEvent) {
+    if (scrollEnabled == false) return false;
+
     ReactScrollViewHelper.emitScrollBeginDragEvent(this);
 
     int action = motionEvent.getAction();
@@ -184,7 +187,7 @@ public class DirectedScrollView extends ReactViewGroup {
 
   private void onActionMove(MotionEvent motionEvent) {
     NativeGestureUtil.notifyNativeGestureStarted(this, motionEvent);
-    
+
     if (isScaleInProgress) return;
 
     isScrollInProgress = true;
@@ -375,6 +378,10 @@ public class DirectedScrollView extends ReactViewGroup {
 
   public void setMinimumZoomScale(final float minimumZoomScale) {
     this.minimumZoomScale = minimumZoomScale;
+  }
+
+  public void setScrollEnabled(final boolean scrollEnabled) {
+    this.scrollEnabled = scrollEnabled;
   }
 
   public void setBounces(final boolean bounces) {
