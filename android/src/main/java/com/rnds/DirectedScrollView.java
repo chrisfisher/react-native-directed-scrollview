@@ -11,10 +11,14 @@ import android.view.ViewParent;
 import android.view.ScaleGestureDetector;
 import android.view.animation.Interpolator;
 
+import com.facebook.react.views.scroll.ScrollEventType;
+import com.facebook.react.views.scroll.ScrollEvent;
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.events.NativeGestureUtil;
+import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.views.scroll.ReactScrollViewHelper;
 import com.facebook.react.views.view.ReactViewGroup;
+import com.facebook.react.bridge.ReactContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +50,13 @@ public class DirectedScrollView extends ReactViewGroup {
 
   private ScaleGestureDetector scaleDetector;
 
+  private ReactContext reactContext;
+
   public DirectedScrollView(Context context) {
     super(context);
 
     initGestureListeners(context);
-
+    reactContext = (ReactContext)this.getContext();
     touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
   }
 
@@ -63,7 +69,7 @@ public class DirectedScrollView extends ReactViewGroup {
 
   @Override
   public boolean onInterceptTouchEvent(final MotionEvent motionEvent) {
-    ReactScrollViewHelper.emitScrollBeginDragEvent(this);
+    emitScrollEvent(ScrollEventType.STAR_DRAG, 0, 0);
 
     int action = motionEvent.getAction();
     if (action == MotionEvent.ACTION_UP | action == MotionEvent.ACTION_CANCEL) {
@@ -184,7 +190,7 @@ public class DirectedScrollView extends ReactViewGroup {
 
   private void onActionMove(MotionEvent motionEvent) {
     NativeGestureUtil.notifyNativeGestureStarted(this, motionEvent);
-    
+
     if (isScaleInProgress) return;
 
     isScrollInProgress = true;
@@ -201,12 +207,12 @@ public class DirectedScrollView extends ReactViewGroup {
       clampAndTranslateChildren(false);
     }
 
-    ReactScrollViewHelper.emitScrollEvent(this, 0, 0);
+    this.emitScrollEvent(ScrollEventType.SCROLL, deltaX * -1, deltaY * -1);
   }
 
   private void onActionUp() {
     if (isScrollInProgress) {
-      ReactScrollViewHelper.emitScrollEndDragEvent(this, 0, 0);
+      emitScrollEvent(ScrollEventType.END_DRAG, 0, 0);
       isScrollInProgress = false;
     }
 
@@ -367,6 +373,24 @@ public class DirectedScrollView extends ReactViewGroup {
     }
 
     return scrollableChildren;
+  }
+
+  private void emitScrollEvent(
+    ScrollEventType scrollEventType,
+    float xVelocity,
+    float yVelocity) {
+    reactContext.getNativeModule(UIManagerModule.class).getEventDispatcher().dispatchEvent(
+      ScrollEvent.obtain(
+        getId(),
+        scrollEventType,
+        Math.round(scrollX * -1),
+        Math.round(scrollY * -1),
+        xVelocity,
+        yVelocity,
+        Math.round(getContentContainerWidth()),
+        Math.round(getContentContainerHeight()),
+        getWidth(),
+        getHeight()));
   }
 
   public void setMaximumZoomScale(final float maximumZoomScale) {
