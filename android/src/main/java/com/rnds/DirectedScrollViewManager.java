@@ -74,4 +74,9 @@ class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
   public void setBouncesZoom(DirectedScrollView view, @Nullable boolean bouncesZoom) {
     view.setBouncesZoom(bouncesZoom);
   }
+
+  @ReactProp(name = "scrollEnabled", defaultBoolean = true)
+  public void setScrollEnabled(DirectedScrollView view, @Nullable boolean scrollEnabled) {
+    view.setScrollEnabled(scrollEnabled);
+  }
 }
