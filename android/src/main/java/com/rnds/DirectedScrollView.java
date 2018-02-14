@@ -231,8 +231,11 @@ public class DirectedScrollView extends ReactViewGroup {
 
     isScaleInProgress = false;
   }
+  private void clampAndTranslateChildren(boolean animated) {
+    this.clampAndTranslateChildren(animated, true, true);
+  }
 
-  private void clampAndTranslateChildren(boolean animated, boolean clampVertical = true, boolean clampHorizontal = true) {
+  private void clampAndTranslateChildren(boolean animated, boolean clampVertical, boolean clampHorizontal) {
     float[] minPoints = transformPoints(new float[] { 0, 0 });
     float minX = minPoints[0];
     float minY = minPoints[1];
