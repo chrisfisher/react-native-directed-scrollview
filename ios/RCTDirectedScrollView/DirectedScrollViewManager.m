@@ -101,6 +101,8 @@ RCT_EXPORT_MODULE()
 // RCTScrollView properties
 
 RCT_EXPORT_VIEW_PROPERTY(bounces, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(alwaysBounceHorizontal, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(alwaysBounceVertical, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(bouncesZoom, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(maximumZoomScale, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(minimumZoomScale, CGFloat)
