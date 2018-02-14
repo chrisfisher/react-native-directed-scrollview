@@ -89,4 +89,9 @@ class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
   public void setScrollEnabled(DirectedScrollView view, @Nullable boolean scrollEnabled) {
     view.setScrollEnabled(scrollEnabled);
   }
+
+  @ReactProp(name = "pinchGestureEnabled", defaultBoolean = true)
+  public void setPinchGestureEnabled(DirectedScrollView view, @Nullable boolean pinchGestureEnabled) {
+    view.setPinchGestureEnabled(pinchGestureEnabled);
+  }
 }
