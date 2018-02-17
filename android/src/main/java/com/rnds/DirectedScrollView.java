@@ -31,6 +31,8 @@ public class DirectedScrollView extends ReactViewGroup {
   private float minimumZoomScale = 1.0f;
   private float maximumZoomScale = 1.0f;
   private boolean bounces = true;
+  private boolean alwaysBounceVertical = true;
+  private boolean alwaysBounceHorizontal = true;
   private boolean bouncesZoom = true;
 
   private float pivotX;
@@ -70,7 +72,10 @@ public class DirectedScrollView extends ReactViewGroup {
 
   @Override
   public boolean onInterceptTouchEvent(final MotionEvent motionEvent) {
-    if (scrollEnabled == false) return false;
+    if (!scrollEnabled) {
+      return false;
+    }
+
     emitScrollEvent(ScrollEventType.BEGIN_DRAG, 0, 0);
 
     int action = motionEvent.getAction();
@@ -204,7 +209,7 @@ public class DirectedScrollView extends ReactViewGroup {
     scrollY = startScrollY + deltaY;
 
     if (bounces) {
-      translateChildren(false);
+      clampAndTranslateChildren(false, !this.alwaysBounceVertical, !this.alwaysBounceHorizontal);
     } else {
       clampAndTranslateChildren(false);
     }
@@ -228,26 +233,31 @@ public class DirectedScrollView extends ReactViewGroup {
 
     isScaleInProgress = false;
   }
-
   private void clampAndTranslateChildren(boolean animated) {
+    this.clampAndTranslateChildren(animated, true, true);
+  }
+
+  private void clampAndTranslateChildren(boolean animated, boolean clampVertical, boolean clampHorizontal) {
     float[] minPoints = transformPoints(new float[] { 0, 0 });
     float minX = minPoints[0];
     float minY = minPoints[1];
     float maxX = minPoints[0] + getMaxScrollX();
     float maxY = minPoints[1] + getMaxScrollY();
 
-    if (maxX > minX) {
-      scrollX = clamp(scrollX, -maxX, -minX);
-    } else {
-      scrollX = -minX;
+    if (clampHorizontal) {
+      if (maxX > minX) {
+        scrollX = clamp(scrollX, -maxX, -minX);
+      } else {
+        scrollX = -minX;
+      }
     }
-
-    if (maxY > minY) {
-      scrollY = clamp(scrollY, -maxY, -minY);
-    } else {
-      scrollY = -minY;
+    if (clampVertical) {
+      if (maxY > minY) {
+        scrollY = clamp(scrollY, -maxY, -minY);
+      } else {
+        scrollY = -minY;
+      }
     }
-
     translateChildren(animated);
   }
 
@@ -413,6 +423,14 @@ public class DirectedScrollView extends ReactViewGroup {
 
   public void setBouncesZoom(final boolean bouncesZoom) {
     this.bouncesZoom = bouncesZoom;
+  }
+
+  public void setAlwaysBounceHorizontal(final boolean alwaysBounceHorizontal) {
+    this.alwaysBounceHorizontal = alwaysBounceHorizontal;
+  }
+
+  public void setAlwaysBounceVertical(final boolean alwaysBounceVertical) {
+    this.alwaysBounceVertical = alwaysBounceVertical;
   }
 
   public void scrollTo(Double x, Double y, Boolean animated) {
