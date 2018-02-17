@@ -16,8 +16,8 @@ The following props are supported:
 | `maximumZoomScale` | `1.0` | How far the content can zoom in. |
 | `bounces` | `true` | Whether content bounces at the limits when scrolling. |
 | `bouncesZoom` | `true` | Whether content bounces at the limits when zooming. |
-| `alwaysBounceHorizontal` | `true` | When `bounces` is enabled, content will bounce Horizontaly. |
-| `alwaysBounceVertical` | `true` | When `bounces` is enabled, content will bounce Verticaly. |
+| `alwaysBounceHorizontal` | `true` | When `bounces` is enabled, content will bounce horizontally. |
+| `alwaysBounceVertical` | `true` | When `bounces` is enabled, content will bounce vertically. |
 | **ios** `showsVerticalScrollIndicator` | `true` | Whether vertical scroll bars are visible. |
 | **ios** `showsHorizontalScrollIndicator` | `true` | Whether horizontal scroll bars are visible. |
 

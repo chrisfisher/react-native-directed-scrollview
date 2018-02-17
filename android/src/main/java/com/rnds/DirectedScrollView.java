@@ -163,7 +163,9 @@ public class DirectedScrollView extends ReactViewGroup {
 
       @Override
       public boolean onScale(ScaleGestureDetector detector) {
-        if (pinchGestureEnabled == false) return false;
+        if (!pinchGestureEnabled) {
+          return false;
+        }
 
         scaleFactor *= detector.getScaleFactor();
         updateChildren();
