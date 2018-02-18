@@ -144,17 +144,15 @@ RCT_EXPORT_METHOD(scrollTo:(nonnull NSNumber *)reactTag
      }];
 }
 
-RCT_EXPORT_METHOD(zoomToFit:(nonnull NSNumber *)reactTag
+RCT_EXPORT_METHOD(zoomToStart:(nonnull NSNumber *)reactTag
                   animated:(BOOL)animated)
 {
     [self.bridge.uiManager addUIBlock:
      ^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry){
          UIView *view = viewRegistry[reactTag];
          if ([view conformsToProtocol:@protocol(RCTScrollableProtocol)]) {
-             CGRect contentViewFrame = [(RCTScrollView*)view contentView].frame;
-             if (contentViewFrame.size.width > view.frame.size.width) {
-                 [(id<RCTScrollableProtocol>)view zoomToRect:contentViewFrame animated:animated];
-             }
+             [(id<RCTScrollableProtocol>)view zoomToRect:CGRectMake(0, 0, 0, 0) animated:animated];
+             [((RCTScrollView*)view).scrollView setZoomScale:1.0 animated:animated];
          } else {
              RCTLogError(@"tried to zoomToRect: on non-RCTScrollableProtocol view %@ with tag #%@", view, reactTag);
          }

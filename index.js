@@ -27,16 +27,21 @@ const ScrollView = createReactClass({
       [x || 0, y || 0, animated !== false],
     );
   },
-  zoomToFit: function({ animated }) {
+  zoomToStart: function({ animated }) {
      UIManager.dispatchViewManagerCommand(
       this.getScrollableNode(),
-      UIManager.DirectedScrollView.Commands.zoomToFit,
+      UIManager.DirectedScrollView.Commands.zoomToStart,
       [animated !== false],
     );
   },
   _scrollViewRef: null,
   _setScrollViewRef: function(ref) {
     this._scrollViewRef = ref;
+  },
+  componentDidMount: function() {
+    setTimeout(() => {
+      this.zoomToStart({animated: false});
+    }, 0);
   },
   render: function() {
     return (
