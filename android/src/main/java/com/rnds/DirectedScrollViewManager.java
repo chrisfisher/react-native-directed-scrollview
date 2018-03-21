@@ -75,12 +75,12 @@ class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
     view.setBouncesZoom(bouncesZoom);
   }
 
-  @ReactProp(name = "alwaysBounceHorizontal", defaultBoolean = true)
+  @ReactProp(name = "alwaysBounceHorizontal", defaultBoolean = false)
   public void setAlwaysBounceHorizontal(DirectedScrollView view, @Nullable boolean alwaysBounceHorizontal) {
     view.setAlwaysBounceHorizontal(alwaysBounceHorizontal);
   }
 
-  @ReactProp(name = "alwaysBounceVertical", defaultBoolean = true)
+  @ReactProp(name = "alwaysBounceVertical", defaultBoolean = false)
   public void setAlwaysBounceVertical(DirectedScrollView view, @Nullable boolean alwaysBounceVertical) {
     view.setAlwaysBounceVertical(alwaysBounceVertical);
   }
