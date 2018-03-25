@@ -31,8 +31,8 @@ public class DirectedScrollView extends ReactViewGroup {
   private float minimumZoomScale = 1.0f;
   private float maximumZoomScale = 1.0f;
   private boolean bounces = true;
-  private boolean alwaysBounceVertical = true;
-  private boolean alwaysBounceHorizontal = true;
+  private boolean alwaysBounceVertical = false;
+  private boolean alwaysBounceHorizontal = false;
   private boolean bouncesZoom = true;
   private boolean scrollEnabled = true;
   private boolean pinchGestureEnabled = true;
@@ -214,7 +214,7 @@ public class DirectedScrollView extends ReactViewGroup {
     scrollY = startScrollY + deltaY;
 
     if (bounces) {
-      clampAndTranslateChildren(false, !this.alwaysBounceVertical, !this.alwaysBounceHorizontal);
+      clampAndTranslateChildren(false, getMaxScrollY() <= 0 && !alwaysBounceVertical, getMaxScrollX() <= 0 && !alwaysBounceHorizontal);
     } else {
       clampAndTranslateChildren(false);
     }
