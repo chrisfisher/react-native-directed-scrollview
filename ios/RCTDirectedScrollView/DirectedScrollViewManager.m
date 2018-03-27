@@ -122,12 +122,12 @@ RCT_EXPORT_MODULE()
 
 // RCTDirectedScrollViewDelegate methods
 
--(void)scrollViewDidEndDragging {
-    [self.bridge.eventDispatcher sendDeviceEventWithName:@"scrollViewDidEndDragging" body:nil];
-}
-
 -(void)scrollViewWillBeginDragging {
     [self.bridge.eventDispatcher sendDeviceEventWithName:@"scrollViewWillBeginDragging" body:nil];
+}
+
+-(void)scrollViewDidEndDragging {
+    [self.bridge.eventDispatcher sendDeviceEventWithName:@"scrollViewDidEndDragging" body:nil];
 }
 
 // RCTScrollView properties
@@ -187,18 +187,6 @@ RCT_EXPORT_METHOD(zoomToStart:(nonnull NSNumber *)reactTag
              [((RCTScrollView*)view).scrollView setZoomScale:1.0 animated:animated];
          } else {
              RCTLogError(@"tried to zoomToRect: on non-RCTScrollableProtocol view %@ with tag #%@", view, reactTag);
-         }
-     }];
-}
-
-RCT_EXPORT_METHOD(updateContentOffsetIfNeeded:(nonnull NSNumber *)reactTag) {
-    [self.bridge.uiManager addUIBlock:
-     ^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry){
-         UIView *view = viewRegistry[reactTag];
-         if ([view isKindOfClass:[RCTScrollView class]]) {
-             [(RCTScrollView *)view updateContentOffsetIfNeeded];
-         } else {
-             RCTLogError(@"tried to didResizeContent: on non-RCTScrollView %@ with tag #%@", view, reactTag);
          }
      }];
 }
