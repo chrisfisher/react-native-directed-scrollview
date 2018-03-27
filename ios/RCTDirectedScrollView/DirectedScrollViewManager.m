@@ -13,16 +13,49 @@
 
 @property (nonatomic, weak) id <DirectedScrollViewDelegate> delegate;
 
+@property (nonatomic, assign) BOOL verticalBounceEnabled;
+@property (nonatomic, assign) BOOL horizontalBounceEnabled;
+
 @end
 
 @implementation DirectedScrollView
 
 #pragma mark - ScrollView delegate
 
+@synthesize verticalBounceEnabled = _verticalBounceEnabled;
+@synthesize horizontalBounceEnabled = _horizontalBounceEnabled;
+
+// Tried to overwrite getter to manager default value 
+- (BOOL) verticalBounceEnabled {
+    return _verticalBounceEnabled ? _verticalBounceEnabled : TRUE;
+}
+- (BOOL) horizontalBounceEnabled {
+    return _horizontalBounceEnabled ? _horizontalBounceEnabled : TRUE;
+}
+
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     [super scrollViewDidScroll:scrollView];
     UIView *contentView = [self contentView];
+
+    RCTLogInfo(@"verticalBounceEnabled -> %d", _verticalBounceEnabled);
+    RCTLogInfo(@"horizontalBounceEnabled -> %d", _horizontalBounceEnabled);
+
+    if(!_verticalBounceEnabled) {
+        if (scrollView.contentInset.bottom <= 0) {
+            [scrollView setContentInset:UIEdgeInsetsMake(scrollView.contentInset.top,scrollView.contentInset.right,0,scrollView.contentInset.left)];
+        } else if (scrollView.contentOffset.y < 0) {
+            [scrollView setContentOffset:CGPointMake(scrollView.contentOffset.x, 0) animated: false];
+        }
+    }
+    if(!_horizontalBounceEnabled) {
+         if (scrollView.contentOffset.x >= scrollView.contentSize.width - scrollView.frame.size.width) {
+             [scrollView setContentOffset:CGPointMake(scrollView.contentSize.width - scrollView.frame.size.width, scrollView.contentOffset.y) animated: false];
+         } else if (scrollView.contentOffset.y < 0) {
+             [scrollView setContentOffset:CGPointMake(0, scrollView.contentOffset.y) animated: false];
+         }
+     }
 
     for (UIView *subview in contentView.reactSubviews)
     {
@@ -89,14 +122,13 @@ RCT_EXPORT_MODULE()
 
 // RCTDirectedScrollViewDelegate methods
 
--(void)scrollViewWillBeginDragging {
-    [self.bridge.eventDispatcher sendDeviceEventWithName:@"scrollViewWillBeginDragging" body:nil];
-}
-
 -(void)scrollViewDidEndDragging {
     [self.bridge.eventDispatcher sendDeviceEventWithName:@"scrollViewDidEndDragging" body:nil];
 }
 
+-(void)scrollViewWillBeginDragging {
+    [self.bridge.eventDispatcher sendDeviceEventWithName:@"scrollViewWillBeginDragging" body:nil];
+}
 
 // RCTScrollView properties
 
@@ -157,6 +189,30 @@ RCT_EXPORT_METHOD(zoomToStart:(nonnull NSNumber *)reactTag
              RCTLogError(@"tried to zoomToRect: on non-RCTScrollableProtocol view %@ with tag #%@", view, reactTag);
          }
      }];
+}
+
+RCT_EXPORT_METHOD(updateContentOffsetIfNeeded:(nonnull NSNumber *)reactTag) {
+    [self.bridge.uiManager addUIBlock:
+     ^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry){
+         UIView *view = viewRegistry[reactTag];
+         if ([view isKindOfClass:[RCTScrollView class]]) {
+             [(RCTScrollView *)view updateContentOffsetIfNeeded];
+         } else {
+             RCTLogError(@"tried to didResizeContent: on non-RCTScrollView %@ with tag #%@", view, reactTag);
+         }
+     }];
+}
+
+RCT_CUSTOM_VIEW_PROPERTY(verticalBounceEnabled, BOOL, DirectedScrollView)
+{
+    // Failed to set property
+    view.verticalBounceEnabled = json;
+}
+
+RCT_CUSTOM_VIEW_PROPERTY(horizontalBounceEnabled, BOOL, DirectedScrollView)
+{
+    // Failed to set property
+    view.horizontalBounceEnabled = json;
 }
 
 @end
