@@ -13,6 +13,9 @@ import java.util.Map;
 
 class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
 
+  public static final int COMMAND_SCROLL_TO = 1;
+  public static final int COMMAND_ZOOM_TO_START = 2;
+
   @Override
   public String getName() {
     return "DirectedScrollView";
@@ -25,18 +28,29 @@ class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
 
   @Override
   public Map<String,Integer> getCommandsMap() {
-    return MapBuilder.of("scrollTo", 1);
+    return MapBuilder.of(
+      "scrollTo", COMMAND_SCROLL_TO,
+      "zoomToStart", COMMAND_ZOOM_TO_START
+    );
   }
 
   @Override
   public void receiveCommand(DirectedScrollView view, int commandType, @Nullable ReadableArray args) {
     super.receiveCommand(view, commandType, args);
-    if (commandType == 1) {
-      Double translateX = args.getDouble(0);
-      Double translateY = args.getDouble(1);
-      Boolean animated = args.getBoolean(2);
 
-      view.scrollTo(translateX, translateY, animated);
+    switch (commandType) {
+      case COMMAND_SCROLL_TO:
+        Double translateX = args.getDouble(0);
+        Double translateY = args.getDouble(1);
+        Boolean animated = args.getBoolean(2);
+
+        view.scrollTo(translateX, translateY, animated);
+        break;
+      case COMMAND_ZOOM_TO_START:
+        view.scrollTo(0.0, 0.0, args.getBoolean(0));
+        break;
+      default:
+        throw new IllegalArgumentException(String.format("Unsupported command %d received by %s.", commandType, getClass().getSimpleName()));
     }
   }
 
@@ -75,12 +89,12 @@ class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
     view.setBouncesZoom(bouncesZoom);
   }
 
-  @ReactProp(name = "alwaysBounceHorizontal", defaultBoolean = true)
+  @ReactProp(name = "alwaysBounceHorizontal", defaultBoolean = false)
   public void setAlwaysBounceHorizontal(DirectedScrollView view, @Nullable boolean alwaysBounceHorizontal) {
     view.setAlwaysBounceHorizontal(alwaysBounceHorizontal);
   }
 
-  @ReactProp(name = "alwaysBounceVertical", defaultBoolean = true)
+  @ReactProp(name = "alwaysBounceVertical", defaultBoolean = false)
   public void setAlwaysBounceVertical(DirectedScrollView view, @Nullable boolean alwaysBounceVertical) {
     view.setAlwaysBounceVertical(alwaysBounceVertical);
   }

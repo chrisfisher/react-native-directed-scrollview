@@ -16,8 +16,8 @@ The following props are supported:
 | `maximumZoomScale` | `1.0` | How far the content can zoom in. |
 | `bounces` | `true` | Whether content bounces at the limits when scrolling. |
 | `bouncesZoom` | `true` | Whether content bounces at the limits when zooming. |
-| `alwaysBounceHorizontal` | `true` | When `bounces` is enabled, content will bounce horizontally. |
-| `alwaysBounceVertical` | `true` | When `bounces` is enabled, content will bounce vertically. |
+| `alwaysBounceHorizontal` | `false` | When `bounces` is enabled, content will bounce horizontally even if the content is smaller than the bounds of the scroll view. |
+| `alwaysBounceVertical` | `false` | When `bounces` is enabled, content will bounce vertically even if the content is smaller than the bounds of the scroll view.. |
 | **ios** `showsVerticalScrollIndicator` | `true` | Whether vertical scroll bars are visible. |
 | **ios** `showsHorizontalScrollIndicator` | `true` | Whether horizontal scroll bars are visible. |
 
@@ -54,13 +54,13 @@ export default class Example extends Component {
         style={styles.container}
       >
         <ScrollViewChild scrollDirection={'both'}>
-          // multi-directional scrolling content here...      
+          // multi-directional scrolling content here...
         </ScrollViewChild>
         <ScrollViewChild scrollDirection={'vertical'}>
-          // vertically scrolling content here...      
+          // vertically scrolling content here...
         </ScrollViewChild>
         <ScrollViewChild scrollDirection={'horizontal'}>
-          // horizontally scrolling content here...      
+          // horizontally scrolling content here...
         </ScrollViewChild>
       </ScrollView>
     );
