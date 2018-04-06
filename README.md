@@ -32,6 +32,53 @@ The following methods are supported:
 - `npm install react-native-directed-scrollview --save`
 - `react-native link` (or `rnpm link`)
 
+### Manual Linking (Android)
+Follow these steps if automatic linking (`react-native link`) failed.
+
+1. Include this module in `android/settings.gradle`:
+
+   ```
+   ...
+   include ':react-native-directed-scrollview' // Add this
+   project(':react-native-directed-scrollview').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-directed-scrollview/android') // Add this
+
+   ...
+   include ':app'
+   ```
+
+2. In `android/app/build.gradle`, add the dependency to your app build:
+
+   ```
+   dependencies {
+       ...
+       compile project(':react-native-directed-scrollview') // Add this
+   }
+   ```
+
+3. Import and add package, in `android/app/src/main/.../MainApplication.java`:
+
+   ```java
+   ...
+   import android.app.Application;
+   ...
+
+   import com.rnds.DirectedScrollViewPackage; // Add new import
+
+   ...
+
+   public class MainApplication extends Application implements ReactApplication {
+     ...
+     @Override
+     protected List<ReactPackage> getPackages() {
+       return Arrays.<ReactPackage>asList(
+         new MainReactPackage(),
+         ...
+         new DirectedScrollViewPackage() // Add the package here
+       );
+     }
+   }
+   ```
+
 ## Usage
 
 To work properly this component requires that a fixed-size content container be specified through the **contentContainerStyle** prop.
