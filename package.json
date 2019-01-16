@@ -20,6 +20,9 @@
     "vertical",
     "direction"
   ],
+  "dependencies": {
+    "create-react-class": "^15.6.3"
+  },
   "peerDependencies": {
     "react-native": ">=0.56.0"
   },
