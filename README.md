@@ -1,3 +1,7 @@
+# UNMAINTAINED
+
+This library is no longer actively maintained and is not guaranteed to work with the latest version of React Native. Feel free to fork the repo and/or adapt the code.
+
 # react-native-directed-scrollview
 
 ![demo](example/rnds-demo.gif)
