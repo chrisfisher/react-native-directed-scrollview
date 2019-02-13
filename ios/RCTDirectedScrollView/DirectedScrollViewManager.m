@@ -104,6 +104,7 @@ RCT_EXPORT_VIEW_PROPERTY(bounces, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(alwaysBounceHorizontal, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(alwaysBounceVertical, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(bouncesZoom, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(zoomScale, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(maximumZoomScale, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(minimumZoomScale, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, BOOL)
@@ -114,7 +115,7 @@ RCT_EXPORT_VIEW_PROPERTY(automaticallyAdjustContentInsets, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(decelerationRate, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(directionalLockEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(scrollEnabled, BOOL)
-RCT_REMAP_VIEW_PROPERTY(pinchGestureEnabled, scrollView.pinchGestureEnabled, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(pinchGestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(contentInset, UIEdgeInsets)
 RCT_EXPORT_VIEW_PROPERTY(scrollIndicatorInsets, UIEdgeInsets)
 RCT_EXPORT_VIEW_PROPERTY(snapToInterval, int)
@@ -145,14 +146,14 @@ RCT_EXPORT_METHOD(scrollTo:(nonnull NSNumber *)reactTag
 }
 
 RCT_EXPORT_METHOD(zoomToStart:(nonnull NSNumber *)reactTag
-                  animated:(BOOL)animated)
+                  animated:(BOOL)animated zoomScale:(CGFloat)zoomScale)
 {
     [self.bridge.uiManager addUIBlock:
      ^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry){
          UIView *view = viewRegistry[reactTag];
          if ([view conformsToProtocol:@protocol(RCTScrollableProtocol)]) {
              [(id<RCTScrollableProtocol>)view zoomToRect:CGRectMake(0, 0, 0, 0) animated:animated];
-             [((RCTScrollView*)view).scrollView setZoomScale:1.0 animated:animated];
+             [((RCTScrollView*)view).scrollView setZoomScale:zoomScale animated:animated];
          } else {
              RCTLogError(@"tried to zoomToRect: on non-RCTScrollableProtocol view %@ with tag #%@", view, reactTag);
          }
