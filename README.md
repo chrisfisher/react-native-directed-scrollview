@@ -22,6 +22,8 @@ The following props are supported:
 | `bouncesZoom` | `true` | Whether content bounces at the limits when zooming. |
 | `alwaysBounceHorizontal` | `false` | When `bounces` is enabled, content will bounce horizontally even if the content is smaller than the bounds of the scroll view. |
 | `alwaysBounceVertical` | `false` | When `bounces` is enabled, content will bounce vertically even if the content is smaller than the bounds of the scroll view.. |
+| **android** `horizontalBounceEnabled` | `true` | If `false`, content will not bounce horizontally. |
+| **android** `verticalBounceEnabled` | `true` | If `false`, content will not bounce vertically. |
 | **ios** `showsVerticalScrollIndicator` | `true` | Whether vertical scroll bars are visible. |
 | **ios** `showsHorizontalScrollIndicator` | `true` | Whether horizontal scroll bars are visible. |
 
